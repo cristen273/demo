@@ -1,58 +1,41 @@
-pipeline {
-    agent any
+pipeline{
 
-    environment {
-        DOCKER_IMAGE = 'your-docker-image-name'
-        REGISTRY = 'your-docker-registry'
-        REGISTRY_CREDENTIALS = 'docker-credentials-id'
-        KUBECONFIG_CREDENTIALS = 'kubeconfig-credentials-id'
-        K8S_NAMESPACE = 'your-kubernetes-namespace'
-        GIT_REPO = 'https://github.com/your-repo.git'
-        GIT_BRANCH = 'main'
+ agent any
+
+ environment {
+  DOCKERHUB_CREDENTIALS=credentials('dockerhub')
+ }
+
+ stages {
+  stage('Build') {
+
+   steps {
+    sh 'docker build -t cristen273/cristen:jenkinsdemo .'
+   }
+  }
+
+  stage('Login') {
+
+   steps {
+    sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+   }
+  }
+
+  stage('Push') {
+
+   steps {
+    sh 'docker push cristen273/cristen:jenkinsdemo'
+   }
+  }
+
+  stage('Deploy to Kubernetes'){
+   steps{
+    withKubeConfig([credentialsId: 'Kube-config-k8s']) {
+     sh 'kubectl apply -f pod.yaml'
+     sh 'kubectl apply -f svc.yaml'
+     sh 'kubectl apply -f secret.yaml'
     }
-
-    stages {
-        stage('Checkout') {
-            steps {
-                // Checkout the Git repository
-                git branch: "${env.GIT_BRANCH}", url: "${env.GIT_REPO}"
-            }
-        }
-
-        stage('Build') {
-            steps {
-                script {
-                    // Build the Docker image
-                    def image = docker.build("${env.DOCKER_IMAGE}:${env.BUILD_ID}", '.')
-                   
-                    // Push the Docker image to the registry
-                    docker.withRegistry("https://${env.REGISTRY}", "${env.REGISTRY_CREDENTIALS}") {
-                        image.push()
-                    }
-                }
-            }
-        }
-
-        stage('Deploy') {
-            steps {
-                script {
-                    // Get the Kubernetes configuration
-                    withCredentials([file(credentialsId: "${env.KUBECONFIG_CREDENTIALS}", variable: 'KUBECONFIG')]) {
-                        // Deploy the Docker image to Kubernetes
-                        sh """
-                        kubectl --kubeconfig=$KUBECONFIG set image deployment/your-deployment-name your-container-name=${env.REGISTRY}/${env.DOCKER_IMAGE}:${env.BUILD_ID} -n ${env.K8S_NAMESPACE}
-                        """
-                    }
-                }
-            }
-        }
-    }
-
-    post {
-        always {
-            // Clean up workspace
-            cleanWs()
-        }
-    }
+   }
+  } 
+ }
 }
-
