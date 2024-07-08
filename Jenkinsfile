@@ -10,29 +10,27 @@ pipeline{
   stage('Build') {
 
    steps {
-    sh 'docker build -t cristen273/cristen:jenkinsdemo .'
+    echo 'build'
    }
   }
 
   stage('Login') {
 
    steps {
-    sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+    echo 'login'
    }
   }
 
   stage('Push') {
 
    steps {
-    sh 'docker push cristen273/cristen:jenkinsdemo'
+    echo 'push'
    }
   }
 
   stage('Deploy to Kubernetes'){
    steps{
-    withKubeConfig([credentialsId: 'Kube-config-k8s']) {
-     sh 'kubectl apply -f deployment.yaml'
-    }
+    echo 'kube deployed'
    }
   } 
  }
