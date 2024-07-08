@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demodeployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: demoimage
+  template:
+    metadata:
+      labels:
+        app: demoimage
+    spec:
+      containers:
+        - name: demoimage1
+          image: sambathkumarj/web # Assuming 'image' is the name of your Docker image
+          ports:
+            - containerPort: 80  # Expose port 80 from the container
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: demoservice
+spec:
+  selector:
+    app: demoimage  # Select pods with label 'app: demoimage'
+  ports:
+    - name: demoimage1
+      protocol: TCP
+      port: 80 # Port on the service
+      targetPort: 80 # Port to forward traffic to on pods
+      nodePort: 30010  # Expose service on NodePort 30010
+  type: NodePort  # Expose the service using NodePort
