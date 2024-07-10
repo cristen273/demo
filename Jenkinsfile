@@ -1,32 +1,5 @@
 pipeline {
-    agent {
-        kubernetes {
-            // Define the pod template for Jenkins agent
-            // Adjust memory and CPU limits as per your requirement
-            yaml """
-                apiVersion: v1
-                kind: Pod
-                metadata:
-                  labels:
-                    app: my-jenkins-agent
-                spec:
-                  containers:
-                    - name: docker
-                      image: docker:19.03.12
-                      command:
-                        - cat
-                      tty: true
-                    - name: kubectl
-                      image: lachlanevenson/k8s-kubectl:v1.21.0
-                      command:
-                        - cat
-                      tty: true
-                  securityContext:
-                    runAsUser: 0
-                    fsGroup: 0
-            """
-        }
-    }
+    agent any
     
     environment {
         // Define the Docker Hub credentials ID
