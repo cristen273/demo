@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: demoimage1
-          image: cristen273/cristen:jenkinsdemo # Assuming 'image' is the name of your Docker image
+          image: cristen273/cristen:sample # Assuming 'image' is the name of your Docker image
           ports:
             - containerPort: 80  # Expose port 80 from the container
 ---
