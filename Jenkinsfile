@@ -31,7 +31,7 @@ pipeline {
                 // Deploy to Kubernetes using kubectl
                 container('kubectl') {
                     withCredentials([kubeconfigFile(credentialsId: 'kube-config-file', variable: 'KUBECONFIG')]) {
-                        sh "kubectl apply -f deployment.yaml -n"
+                        sh "kubectl apply -f deployment.yaml"
                     }
                 }
             }
