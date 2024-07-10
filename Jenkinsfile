@@ -31,7 +31,7 @@ pipeline {
                 // Add Kubernetes deployment steps here
                 // Example: Use kubectl to apply your deployment.yaml file
                 container('kubectl') {
-                    sh "kubectl apply -f deployment.yaml -n my-namespace"
+                    sh "kubectl apply -f deployment.yaml"
                 }
             }
         }
