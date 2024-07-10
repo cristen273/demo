@@ -3,13 +3,13 @@ pipeline {
     
     environment {
         // Define the Docker Hub credentials ID
-        DOCKERHUB_CREDENTIALS = 'docker'
+        DOCKERHUB_CREDENTIALS = 'dockerhub'
         // Define the Docker image name
         DOCKER_IMAGE = 'cristen273/cristen/sample'
         // Define the Kubernetes namespace
         //KUBE_NAMESPACE = 'your-namespace'
         // Define the Kubernetes deployment name
-        KUBE_DEPLOYMENT_NAME = 'your-deployment-name'
+        KUBE_DEPLOYMENT_NAME = 'demodeployment'
     }
     
     stages {
@@ -22,7 +22,7 @@ pipeline {
                         docker.image(DOCKER_IMAGE).pull()
                         
                         // Build the Docker image (if needed)
-                        docker.image('yourdockerimage:tag').build()
+                        docker.image('cristen273/cristen/sample').build()
                         
                         // Push the Docker image to Docker Hub
                         docker.image(DOCKER_IMAGE).push()
