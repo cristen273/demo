@@ -30,7 +30,9 @@ pipeline {
             steps {
                 // Add Kubernetes deployment steps here
                 withKubeConfig([credentialsId: kube-config-file]){
-                    sh "kubectl apply -f deployment.yaml"
+                    container('kubectl'){
+                        sh "kubectl apply -f deployment.yaml"
+                    }
                 }
             }
         }
