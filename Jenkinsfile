@@ -29,8 +29,7 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 // Add Kubernetes deployment steps here
-                // Example: Use kubectl to apply your deployment.yaml file
-                container('kubectl') {
+                withKubeConfig([credentialsID: kube-config-file]){
                     sh "kubectl apply -f deployment.yaml"
                 }
             }
