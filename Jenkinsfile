@@ -7,7 +7,7 @@ pipeline {
         // Define the Docker image name
         DOCKER_IMAGE = 'cristen273/cristen:sample'
         // Define the Kubernetes namespace
-        //KUBE_NAMESPACE = 'your-namespace'
+        KUBE_NAMESPACE = 'your-namespace'
         // Define the Kubernetes deployment name
         KUBE_DEPLOYMENT_NAME = 'demodeployment'
     }
@@ -28,10 +28,10 @@ pipeline {
         
         stage('Deploy to Kubernetes') {
             steps {
-                // Add Kubernetes deployment steps here
-                withKubeConfig([credentialsId: kube-config-file]){
-                    container('kubectl'){
-                        sh "kubectl apply -f deployment.yaml"
+                // Deploy to Kubernetes using kubectl
+                container('kubectl') {
+                    withCredentials([kubeconfigFile(credentialsId: 'kube-config-file', variable: 'KUBECONFIG')]) {
+                        sh "kubectl apply -f deployment.yaml -n ${KUBE_NAMESPACE}"
                     }
                 }
             }
