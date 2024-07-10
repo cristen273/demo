@@ -18,14 +18,9 @@ pipeline {
                 script {
                     // Authenticate with Docker Hub
                     docker.withRegistry('https://registry.hub.docker.com', DOCKERHUB_CREDENTIALS) {
-                        // Pull the existing image if needed
-                        docker.image(DOCKER_IMAGE).pull()
-                        
-                        // Build the Docker image (if needed)
-                        docker.image('cristen273/cristen/sample').build()
-                        
-                        // Push the Docker image to Docker Hub
-                        docker.image(DOCKER_IMAGE).push()
+                        // Build and push the Docker image
+                        def customImage = docker.build('cristen273/cristen/sample')
+                        customImage.push()
                     }
                 }
             }
@@ -33,9 +28,10 @@ pipeline {
         
         stage('Deploy to Kubernetes') {
             steps {
-                // Deploy to Kubernetes using kubectl
+                // Add Kubernetes deployment steps here
+                // Example: Use kubectl to apply your deployment.yaml file
                 container('kubectl') {
-                    sh "kubectl apply -f deployment.yaml -n ${KUBE_NAMESPACE}"
+                    sh "kubectl apply -f deployment.yaml -n my-namespace"
                 }
             }
         }
