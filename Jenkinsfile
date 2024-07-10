@@ -1,5 +1,22 @@
 pipeline {
-    agent any
+    agent {
+        kubernetes {
+            label 'my-label'  // Use a label to select the correct Jenkins agent pod template
+            defaultContainer 'jnlp'
+            yaml """
+            apiVersion: v1
+            kind: Pod
+            metadata:
+              labels:
+                app: myapp
+            spec:
+              containers:
+              - name: mycontainer
+                image: myimage
+              nodeSelector:
+                kubernetes.io/hostname: cristen-virtualbox  // Specify the node name here
+            """
+        }
     
     environment {
         // Define the Docker Hub credentials ID
